@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Leaflet — базовые стили карты (импортируем из пакета в main.tsx). */
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+}
+
+.leaflet-container {
+  font: inherit;
+}
+
+/* Печать карточки объекта в PDF (§8): прячем навигацию и служебные кнопки. */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+}
