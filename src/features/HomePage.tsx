@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Card, DisclaimerBanner, Stat } from '../components/ui';
 import { useFamilyStore } from '../store/familyStore';
 import { usePropertiesStore } from '../store/propertiesStore';
 import { evaluateAll } from '../lib/benefitsEngine';
 import { formatRub } from '../lib/format';
+import { clearAllData, loadDemoData } from '../lib/demoData';
 
 const steps = [
   { to: '/family', title: '1. Семья и бюджет', desc: 'Дети, доход, собственные средства, якорные адреса.' },
@@ -19,6 +21,19 @@ export default function HomePage() {
 
   const applicableCount = evaluateAll(family).filter((e) => e.status !== 'not_applicable').length;
   const favorites = properties.filter((p) => p.favorite).length;
+  const hasData = family.children.length > 0 || properties.length > 0;
+  const [msg, setMsg] = useState('');
+
+  const handleLoadDemo = () => {
+    if (hasData && !window.confirm('Загрузить демонстрационный пример? Текущие данные будут заменены.')) return;
+    loadDemoData();
+    setMsg('Демо-данные загружены — откройте разделы «Объекты», «Льготы», «Финплан».');
+  };
+  const handleClear = () => {
+    if (!window.confirm('Очистить все данные (семья, объекты, напоминания)?')) return;
+    clearAllData();
+    setMsg('Данные очищены.');
+  };
 
   return (
     <div className="space-y-6">
@@ -28,6 +43,21 @@ export default function HomePage() {
           Ищем и оцениваем жильё рядом с важными адресами, проверяем льготы для многодетной семьи, считаем реальную цену
           после субсидий и строим финансовый план. Приватно — данные хранятся только в этом браузере.
         </p>
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleLoadDemo}
+            className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-50"
+          >
+            ✨ Загрузить демо-данные
+          </button>
+          <button
+            onClick={handleClear}
+            className="rounded-lg border border-white/40 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+          >
+            Очистить всё
+          </button>
+          {msg && <span className="text-sm text-brand-100">{msg}</span>}
+        </div>
       </div>
 
       <DisclaimerBanner />
