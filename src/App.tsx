@@ -8,6 +8,7 @@ import BenefitsPage from './features/benefits/BenefitsPage';
 import FinancePage from './features/finance/FinancePage';
 import ComparePage from './features/compare/ComparePage';
 import RentVsBuyPage from './features/finance/RentVsBuyPage';
+import RemindersPage from './features/reminders/RemindersPage';
 
 const nav = [
   { to: '/', label: 'Обзор', end: true },
@@ -16,6 +17,7 @@ const nav = [
   { to: '/import', label: 'Импорт' },
   { to: '/benefits', label: 'Справочник льгот' },
   { to: '/finance', label: 'Финплан' },
+  { to: '/reminders', label: 'Напоминания' },
   { to: '/rent-vs-buy', label: 'Аренда vs ипотека' },
   { to: '/compare', label: 'Сравнение' },
 ];
@@ -58,6 +60,7 @@ export default function App() {
           <Route path="/import" element={<ImportPage />} />
           <Route path="/benefits" element={<BenefitsPage />} />
           <Route path="/finance" element={<FinancePage />} />
+          <Route path="/reminders" element={<RemindersPage />} />
           <Route path="/rent-vs-buy" element={<RentVsBuyPage />} />
           <Route path="/compare" element={<ComparePage />} />
         </Routes>
