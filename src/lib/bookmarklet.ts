@@ -6,8 +6,11 @@
 // импортировать наш бандл (он живёт на чужом сайте). Основной парсер (listingParser.ts)
 // покрыт тестами и используется на стороне приложения для ручной вставки.
 
-/** Возвращает строку `javascript:...` — значение href для перетаскиваемой ссылки-букмарлета. */
-export function buildBookmarklet(appOrigin: string): string {
+/** Возвращает строку `javascript:...` — значение href для перетаскиваемой ссылки-букмарлета.
+ *  `appBaseUrl` — базовый URL приложения (origin + путь до index), например
+ *  `https://user.github.io/repo./`. Букмарлет открывает `<base>#/import?d=<payload>`
+ *  (HashRouter: маршрут — в хэше, payload — в query-параметре хэша). */
+export function buildBookmarklet(appBaseUrl: string): string {
   const src = `(function(){
   function num(v){ if(typeof v==='number')return v; if(typeof v==='string'){var n=Number(v.replace(/[^0-9.]/g,''));return isFinite(n)&&n>0?n:undefined;} return undefined; }
   var r={};
@@ -39,7 +42,7 @@ export function buildBookmarklet(appOrigin: string): string {
   r.sourceUrl=location.href;
   var json=JSON.stringify(r);
   var b64=btoa(unescape(encodeURIComponent(json))).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');
-  window.open('${appOrigin}/import#'+b64,'_blank');
+  window.open('${appBaseUrl}#/import?d='+b64,'_blank');
 })();`;
   // Схлопываем переносы и лишние пробелы → одна строка для href.
   return 'javascript:' + encodeURIComponent(src.replace(/\n\s*/g, ''));

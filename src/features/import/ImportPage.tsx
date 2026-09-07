@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, Card, DisclaimerBanner, Field } from '../../components/ui';
 import { usePropertiesStore } from '../../store/propertiesStore';
 import { buildBookmarklet } from '../../lib/bookmarklet';
@@ -15,26 +15,33 @@ import PropertyForm, { type PropertyDraft } from '../properties/PropertyForm';
 export default function ImportPage() {
   const addProperty = usePropertiesStore((s) => s.addProperty);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [draft, setDraft] = useState<PropertyDraft | null>(null);
   const [source, setSource] = useState<'bookmarklet' | 'paste' | null>(null);
   const [pasteUrl, setPasteUrl] = useState('');
   const [pasteText, setPasteText] = useState('');
   const [pasteMsg, setPasteMsg] = useState('');
 
-  const appOrigin = typeof window !== 'undefined' ? window.location.origin : '';
-  const bookmarklet = useMemo(() => buildBookmarklet(appOrigin), [appOrigin]);
+  // Базовый URL приложения (origin + путь до index) — на localhost это «/»,
+  // на GitHub Pages — «/<repo>/». Букмарлет открывает <base>#/import?d=<payload>.
+  const appBaseUrl =
+    typeof window !== 'undefined' ? window.location.origin + window.location.pathname : '';
+  const bookmarklet = useMemo(() => buildBookmarklet(appBaseUrl), [appBaseUrl]);
 
-  // При заходе с букмарлета: /import#<payload> — декодируем и предзаполняем форму.
+  // При заходе с букмарлета: #/import?d=<payload> — декодируем и предзаполняем форму.
   useEffect(() => {
-    const hash = window.location.hash.replace(/^#/, '');
-    if (!hash) return;
-    const decoded = decodeImportPayload(hash);
+    const d = searchParams.get('d');
+    if (!d) return;
+    const decoded = decodeImportPayload(d);
     if (decoded) {
       setDraft(draftFromImport(decoded));
       setSource('bookmarklet');
-      // Убираем payload из URL, чтобы не сохранять его в истории/при обновлении.
-      history.replaceState(null, '', window.location.pathname);
+      // Убираем payload из URL, чтобы не тащить его в историю/при обновлении.
+      const next = new URLSearchParams(searchParams);
+      next.delete('d');
+      setSearchParams(next, { replace: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const applyImported = (imported: ImportedListing) => {
