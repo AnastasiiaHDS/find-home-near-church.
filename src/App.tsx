@@ -3,6 +3,7 @@ import HomePage from './features/HomePage';
 import FamilyPage from './features/input/FamilyPage';
 import PropertiesPage from './features/properties/PropertiesPage';
 import PropertyDetailPage from './features/properties/PropertyDetailPage';
+import ImportPage from './features/import/ImportPage';
 import BenefitsPage from './features/benefits/BenefitsPage';
 import FinancePage from './features/finance/FinancePage';
 import ComparePage from './features/compare/ComparePage';
@@ -12,6 +13,7 @@ const nav = [
   { to: '/', label: 'Обзор', end: true },
   { to: '/family', label: 'Семья и бюджет' },
   { to: '/properties', label: 'Объекты' },
+  { to: '/import', label: 'Импорт' },
   { to: '/benefits', label: 'Справочник льгот' },
   { to: '/finance', label: 'Финплан' },
   { to: '/rent-vs-buy', label: 'Аренда vs ипотека' },
@@ -53,6 +55,7 @@ export default function App() {
           <Route path="/family" element={<FamilyPage />} />
           <Route path="/properties" element={<PropertiesPage />} />
           <Route path="/properties/:id" element={<PropertyDetailPage />} />
+          <Route path="/import" element={<ImportPage />} />
           <Route path="/benefits" element={<BenefitsPage />} />
           <Route path="/finance" element={<FinancePage />} />
           <Route path="/rent-vs-buy" element={<RentVsBuyPage />} />
